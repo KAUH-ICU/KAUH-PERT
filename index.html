@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>KAUH PERT</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#005632">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KAUH PERT">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="icon" type="image/png" href="icon.png">
+  <style>
+    :root{--kd:#005632;--kg:#006B3F;--kl:#E8F4EE;--bg:#F3F6F4;--card:#fff;--tx:#1B2621;--mu:#5C6B64;--bd:#DCE5E0;--cr:#C62828;--crb:#FFEBEE;--hi:#E65100;--hib:#FFF3E0;--mo:#B27B00;--mob:#FFF8E1;--lo:#2E7D32;--lob:#E8F5E9;--r:14px}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.45;padding-bottom:84px}
+    .splash-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background-color:var(--kd);background-image:linear-gradient(160deg,rgba(0,70,40,.88),rgba(0,42,24,.94)),url("https://drive.google.com/thumbnail?id=113d98BUjDvwU7ANDDrJwL8cmZFbpZK1P&sz=w1600");background-size:cover;background-position:center;position:fixed;inset:0;overflow-y:auto;z-index:200}
+    .auth-card{width:100%;max-width:410px;background:rgba(255,255,255,.97);border-radius:20px;padding:26px 22px;box-shadow:0 18px 45px rgba(0,0,0,.35);text-align:center}
+    .auth-logo{height:68px;max-width:180px;object-fit:contain;margin-bottom:10px}
+    .auth-title{margin:0;font-size:21px;font-weight:800;color:var(--kd)}
+    .auth-sub{margin:4px 0 18px;font-size:13px;color:var(--mu)}
+    .topbar{position:sticky;top:0;z-index:90;background:linear-gradient(135deg,var(--kd),var(--kg));color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,.14)}
+    .brand-left{display:flex;align-items:center;gap:10px;min-width:0}
+    .brand-left img{height:36px;width:36px;object-fit:contain;background:#fff;border-radius:8px;padding:2px}
+    .brand-name{font-weight:800;font-size:15.5px;line-height:1.15}
+    .brand-role{font-size:11px;opacity:.92;background:rgba(255,255,255,.18);display:inline-block;padding:1px 7px;border-radius:99px;margin-top:2px}
+    .icon-btn{background:rgba(255,255,255,.16);border:none;color:#fff;border-radius:10px;padding:8px 11px;font-size:13px;font-weight:600;cursor:pointer}
+    .container{max-width:680px;margin:0 auto;padding:14px}
+    .hero-banner{border-radius:var(--r);padding:16px;margin-bottom:14px;color:#fff;background-color:var(--kd);background-image:linear-gradient(125deg,rgba(0,86,50,.86),rgba(0,48,28,.78)),url("https://drive.google.com/thumbnail?id=113d98BUjDvwU7ANDDrJwL8cmZFbpZK1P&sz=w1200");background-size:cover;background-position:center;box-shadow:0 4px 12px rgba(0,86,50,.18)}
+    .hero-banner h2{margin:0 0 4px;font-size:17px}
+    .hero-banner p{margin:0;font-size:12.5px;opacity:.92}
+    .card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;border:1px solid var(--bd);box-shadow:0 2px 6px rgba(0,0,0,.03)}
+    .card-title{font-size:15px;font-weight:800;color:var(--kd);margin:0 0 12px;display:flex;align-items:center;justify-content:space-between}
+    .field{margin-bottom:14px;text-align:left}
+    .field label{display:block;font-size:13px;font-weight:700;color:var(--tx);margin-bottom:5px}
+    input[type="text"],input[type="email"],input[type="number"],select,textarea{width:100%;padding:11px 12px;font-size:16px;border:1.5px solid var(--bd);border-radius:10px;background:#fff;color:var(--tx);outline:none;font-family:inherit}
+    input:focus,select:focus,textarea:focus{border-color:var(--kg);box-shadow:0 0 0 3px rgba(0,107,63,.12)}
+    textarea{min-height:74px;resize:vertical}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .yn-group{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .yn-btn{padding:10px;border-radius:10px;border:1.5px solid var(--bd);background:#fff;font-weight:700;font-size:14px;color:var(--mu);cursor:pointer}
+    .yn-btn.active-yes{background:var(--kg);border-color:var(--kg);color:#fff}
+    .yn-btn.active-danger{background:var(--cr);border-color:var(--cr);color:#fff}
+    .yn-btn.active-no{background:#E8EEEC;border-color:#9EB3A9;color:var(--tx)}
+    .chip-grid{display:flex;flex-wrap:wrap;gap:7px}
+    .chip{padding:7px 11px;border-radius:99px;border:1.5px solid var(--bd);background:#fff;font-size:13px;font-weight:600;color:var(--tx);cursor:pointer;user-select:none}
+    .chip.selected{background:var(--kl);border-color:var(--kg);color:var(--kd)}
+    .btn{width:100%;padding:13px 16px;border-radius:11px;border:none;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+    .btn-primary{background:var(--kg);color:#fff}
+    .btn-secondary{background:#E7EFEA;color:var(--kd)}
+    .btn-danger{background:var(--cr);color:#fff}
+    .btn-sm{padding:8px 12px;font-size:13px;width:auto}
+    .stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+    .step-pill{text-align:center;padding:7px 4px;border-radius:9px;font-size:12px;font-weight:700;background:#E2EAE5;color:var(--mu)}
+    .step-pill.active{background:var(--kg);color:#fff}
+    .step-pill.done{background:var(--kl);color:var(--kd);border:1px solid var(--kg)}
+    .sev-box{border-radius:12px;padding:14px;margin-bottom:12px;border-left:6px solid}
+    .sev-critical{background:var(--crb);border-color:var(--cr);color:#7F0000}
+    .sev-high{background:var(--hib);border-color:var(--hi);color:#7A2B00}
+    .sev-moderate{background:var(--mob);border-color:var(--mo);color:#6B4A00}
+    .sev-low{background:var(--lob);border-color:var(--lo);color:#1B5E20}
+    .pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:800}
+    .pill-critical{background:var(--cr);color:#fff}
+    .pill-high{background:var(--hi);color:#fff}
+    .pill-moderate{background:var(--mo);color:#fff}
+    .pill-low{background:var(--lo);color:#fff}
+    .pill-status{background:#E3ECE7;color:var(--kd)}
+    .pill-pending{background:#FFE0B2;color:#8D3D00}
+    .pill-discussion{background:#BBDEFB;color:#0D47A1}
+    .pill-closed{background:#C8E6C9;color:#1B5E20}
+    .patient-card{background:#fff;border-radius:13px;padding:13px 14px;margin-bottom:10px;border:1px solid var(--bd);border-left:5px solid var(--kg);cursor:pointer}
+    .patient-card.border-critical{border-left-color:var(--cr)}
+    .patient-card.border-high{border-left-color:var(--hi)}
+    .patient-card.border-moderate{border-left-color:var(--mo)}
+    .patient-card.border-low{border-left-color:var(--lo)}
+    .pc-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px}
+    .pc-mrn{font-weight:800;font-size:16px}
+    .pc-meta{font-size:12.5px;color:var(--mu)}
+    .filter-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto}
+    .filter-btn{padding:7px 12px;border-radius:99px;border:1px solid var(--bd);background:#fff;font-size:12.5px;font-weight:700;color:var(--mu);white-space:nowrap;cursor:pointer}
+    .filter-btn.active{background:var(--kg);border-color:var(--kg);color:#fff}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--bd);display:flex;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:100;box-shadow:0 -2px 10px rgba(0,0,0,.05)}
+    .nav-item{flex:1;border:none;background:transparent;color:var(--mu);font-size:11px;font-weight:700;padding:5px 2px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+    .nav-item .ico{font-size:19px;line-height:1}
+    .nav-item.active{color:var(--kg)}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:150;display:none;align-items:flex-end;justify-content:center}
+    .modal-backdrop.open{display:flex}
+    .modal-sheet{background:var(--bg);width:100%;max-width:680px;max-height:92vh;border-radius:20px 20px 0 0;overflow-y:auto;padding:16px 15px 30px}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;position:sticky;top:0;background:var(--bg);padding-bottom:8px;border-bottom:1px solid var(--bd);z-index:5}
+    .close-x{background:#DCE5E0;border:none;width:34px;height:34px;border-radius:50%;font-size:18px;font-weight:700;cursor:pointer}
+    .kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px}
+    .kv-item{background:#F7FAF8;padding:8px 10px;border-radius:9px;border:1px solid #E5ECE8}
+    .kv-label{font-size:11px;color:var(--mu);font-weight:700}
+    .kv-val{font-weight:700;color:var(--tx);margin-top:2px}
+    .opinion-card{background:#F6FBF8;border:1px solid #CFE3D8;border-left:4px solid var(--kg);border-radius:10px;padding:11px 12px;margin-bottom:9px}
+    .media-row{display:flex;justify-content:space-between;align-items:center;background:#F7FAF8;border:1px solid var(--bd);border-radius:10px;padding:9px 11px;margin-bottom:8px;gap:10px}
+    .preview-box img,.preview-box video{width:100%;border-radius:10px;margin-top:8px;max-height:60vh;object-fit:contain;background:#000}
+    .loader-overlay{position:fixed;inset:0;background:rgba(255,255,255,.78);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;font-weight:700;color:var(--kd)}
+    .spinner{width:38px;height:38px;border:4px solid #D5E5DD;border-top-color:var(--kg);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1B2621;color:#fff;padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:600;z-index:400;display:none;max-width:92%;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+    .hidden{display:none!important}
+    .small-muted{font-size:12px;color:var(--mu)}
+  </style>
+</head>
+<body>
+  <div id="loader" class="loader-overlay"><div class="spinner"></div><div id="loaderText">Loading KAUH PERT...</div></div>
+  <div id="toast" class="toast"></div>
+
+  <div id="authScreen" class="splash-wrap">
+    <div class="auth-card">
+      <img class="auth-logo" src="https://drive.google.com/thumbnail?id=1KM5xpic7i7a5QFCKZdXfpLR_8-65RWqf&sz=w400" alt="KAUH Logo">
+      <h1 class="auth-title">KAUH PERT</h1>
+      <p class="auth-sub">King Abdulaziz University Hospital<br>Pulmonary Embolism Response Team</p>
+      <div id="authStep1">
+        <div class="field"><label for="loginEmail">Hospital or Personal Email</label><input type="email" id="loginEmail" placeholder="doctor@kau.edu.sa or gmail.com" autocomplete="email"></div>
+        <button type="button" class="btn btn-primary" onclick="requestOtp()">Send 6-Digit Sign-In Code</button>
+        <p class="small-muted" style="margin-top:12px;">You will receive a one-time code by email. Your phone stays signed in for 14 days.</p>
+      </div>
+      <div id="authStep2" class="hidden">
+        <p class="small-muted" id="otpSentMsg" style="margin-bottom:12px;"></p>
+        <div class="field"><label for="otpCode">6-Digit Verification Code</label><input type="number" id="otpCode" placeholder="123456" inputmode="numeric"></div>
+        <div id="newUserFields" class="hidden">
+          <div class="field"><label for="regName">Full Name (with Title)</label><input type="text" id="regName" placeholder="e.g., Dr. Ahmed Al-Harbi"></div>
+          <div class="field"><label for="regPosition">KAUH Position &amp; Specialty</label><input type="text" id="regPosition" placeholder="e.g., ICU Resident / Cardiology Consultant"></div>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="verifyOtp()">Verify &amp; Sign In</button>
+        <button type="button" class="btn btn-secondary" style="margin-top:8px;" onclick="resetAuthStep()">Use Different Email</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pendingScreen" class="splash-wrap hidden">
+    <div class="auth-card">
+      <img class="auth-logo" src="https://drive.google.com/thumbnail?id=1KM5xpic7i7a5QFCKZdXfpLR_8-65RWqf&sz=w400" alt="KAUH Logo">
+      <h2 class="auth-title">Access Pending Approval</h2>
+      <p class="auth-sub" id="pendingUserInfo"></p>
+      <div class="sev-box sev-moderate" style="text-align:left;font-size:13.5px;">Your registration request has been sent to the KAUH ICU Admin. Patient charts remain locked until your role is approved.</div>
+      <button type="button" class="btn btn-primary" onclick="loadAppData(true)">Check Approval Status</button>
+      <button type="button" class="btn btn-secondary" style="margin-top:8px;" onclick="signOut()">Sign Out</button>
+    </div>
+  </div>
+
+  <div id="appShell" class="hidden">
+    <header class="topbar">
+      <div class="brand-left">
+        <img src="https://drive.google.com/thumbnail?id=1KM5xpic7i7a5QFCKZdXfpLR_8-65RWqf&sz=w400" alt="KAUH">
+        <div><div class="brand-name">KAUH PERT</div><span class="brand-role" id="topRoleBadge">Clinician</span></div>
+      </div>
+      <button type="button" class="icon-btn" onclick="loadAppData(true)">Sync</button>
+    </header>
+
+    <main class="container">
+      <section id="tabNew" class="tab-panel">
+        <div class="hero-banner"><h2>New Acute PE Assessment</h2><p>2026 AHA Risk Stratification &amp; PERT Activation</p></div>
+        <div class="stepper">
+          <div id="st1" class="step-pill active">1. Patient</div>
+          <div id="st2" class="step-pill">2. Vitals &amp; Labs</div>
+          <div id="st3" class="step-pill">3. Plan &amp; Submit</div>
+        </div>
+        <div id="wizPage1" class="card">
+          <div class="card-title">Step 1: Demographics &amp; Comorbidities</div>
+          <div class="grid-2">
+            <div class="field"><label for="fMrn">Patient MRN *</label><input type="text" id="fMrn" placeholder="e.g., 1234567"></div>
+            <div class="field"><label for="fAge">Age (years) *</label><input type="number" id="fAge" placeholder="e.g., 64" inputmode="numeric" oninput="updateLiveCalc()"></div>
+          </div>
+          <div class="field"><label>Comorbidities (tap all that apply)</label><div id="comorbChips" class="chip-grid"></div></div>
+          <div class="field"><label for="fComorbNotes">Comorbidities / Clinical Notes</label><textarea id="fComorbNotes" placeholder="Optional bleeding risks, recent surgery, anticoagulation history..."></textarea></div>
+          <button type="button" class="btn btn-primary" onclick="goWizard(2)">Next: Vitals &amp; Markers &rarr;</button>
+        </div>
+
+        <div id="wizPage2" class="card hidden">
+          <div class="card-title">Step 2: Vitals &amp; Severity Markers</div>
+          <div class="grid-3">
+            <div class="field"><label for="fHr">HR (bpm) *</label><input type="number" id="fHr" placeholder="115" inputmode="numeric" oninput="updateLiveCalc()"></div>
+            <div class="field"><label for="fSbp">SBP (mmHg) *</label><input type="number" id="fSbp" placeholder="105" inputmode="numeric" oninput="updateLiveCalc()"></div>
+            <div class="field"><label for="fSpo2">SpO2 (%) *</label><input type="number" id="fSpo2" placeholder="92" inputmode="numeric" oninput="updateLiveCalc()"></div>
+          </div>
+          <div id="ynContainer"></div>
+          <div class="grid-2" style="margin-top:14px;">
+            <button type="button" class="btn btn-secondary" onclick="goWizard(1)">&larr; Back</button>
+            <button type="button" class="btn btn-primary" onclick="goWizard(3)">Next: Risk &amp; Plan &rarr;</button>
+          </div>
+        </div>
+
+        <div id="wizPage3" class="hidden">
+          <div id="liveCalcBox" class="sev-box sev-low"></div>
+          <div class="card">
+            <div class="card-title">PERT Activation</div>
+            <div class="field" style="margin-bottom:0;">
+              <label>Activate PERT Review Queue?</label>
+              <div class="yn-group">
+                <button type="button" id="btnPertYes" class="yn-btn" onclick="setPertToggle('Yes')">Yes - Pending Review</button>
+                <button type="button" id="btnPertNo" class="yn-btn" onclick="setPertToggle('No')">Not Required</button>
+              </div>
+              <p class="small-muted" style="margin:6px 0 0;">Automatically set to <strong>Yes</strong> for Categories C3, D, and E.</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Optional: Attach De-Identified Media</div>
+            <div class="grid-2">
+              <div class="field"><label for="fModality">Modality</label><select id="fModality"><option>Echocardiography</option><option>CTPA</option><option>ECG</option><option>Doppler US</option><option>Chest X-Ray</option><option>Other</option></select></div>
+              <div class="field"><label for="fMediaType">Media Type</label><select id="fMediaType"><option value="Image">Image</option><option value="Video">Video (&lt;12 MB)</option></select></div>
+            </div>
+            <div class="field"><label for="fMediaFile">Choose Photo or Clip (No patient identifiers)</label><input type="file" id="fMediaFile" accept="image/*,video/*"></div>
+            <div class="field" style="margin-bottom:0;"><label for="fMediaCaption">Media Caption</label><input type="text" id="fMediaCaption" placeholder="e.g., McConnell sign / Saddle embolus"></div>
+          </div>
+          <div class="grid-2">
+            <button type="button" class="btn btn-secondary" onclick="goWizard(2)">&larr; Back</button>
+            <button type="button" class="btn btn-primary" onclick="submitAssessment()">Submit PE Case</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="tabPatients" class="tab-panel hidden">
+        <div class="field"><input type="text" id="searchPatients" placeholder="Search by Patient MRN or Category..." oninput="renderPatientsList()"></div>
+        <div id="patientsList"></div>
+      </section>
+
+      <section id="tabPert" class="tab-panel hidden">
+        <div class="filter-row">
+          <button type="button" class="filter-btn active" onclick="setPertFilter('active',this)">Active Queue</button>
+          <button type="button" class="filter-btn" onclick="setPertFilter('all',this)">All Cases</button>
+          <button type="button" class="filter-btn" onclick="setPertFilter('closed',this)">Decision Reached</button>
+        </div>
+        <div id="pertList"></div>
+      </section>
+
+      <section id="tabProfile" class="tab-panel hidden">
+        <div class="card"><div class="card-title">Clinician Account</div><div class="kv-grid" id="profileGrid"></div></div>
+        <div class="card">
+          <div class="card-title">Install KAUH PERT App</div>
+          <button type="button" id="installAppBtn" class="btn btn-primary hidden" style="margin-bottom:10px;" onclick="triggerInstall()">Install KAUH PERT on Phone</button>
+          <p class="small-muted" style="margin:0;"><strong>Android (Chrome):</strong> Tap menu &rarr; <strong>Install app</strong>.<br><br><strong>iPhone (Safari):</strong> Tap <strong>Share</strong> &rarr; <strong>Add to Home Screen</strong>.</p>
+        </div>
+        <button type="button" class="btn btn-danger" onclick="signOut()">Sign Out</button>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button type="button" class="nav-item active" id="navNew" onclick="switchTab('tabNew',this)"><span class="ico">&#10133;</span><span>New Case</span></button>
+      <button type="button" class="nav-item" id="navPatients" onclick="switchTab('tabPatients',this)"><span class="ico">&#128203;</span><span>Patients</span></button>
+      <button type="button" class="nav-item hidden" id="navPert" onclick="switchTab('tabPert',this)"><span class="ico">&#128680;</span><span>PERT</span></button>
+      <button type="button" class="nav-item" id="navProfile" onclick="switchTab('tabProfile',this)"><span class="ico">&#128100;</span><span>Profile</span></button>
+    </nav>
+  </div>
+
+  <div id="caseModal" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <div><strong id="modalTitle" style="font-size:17px;">Case Detail</strong><div id="modalSub" class="small-muted"></div></div>
+        <button type="button" class="close-x" onclick="closeModal()">&times;</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+<script>
+var APP_URL = "https://script.google.com/macros/s/AKfycby6rpP60jNin3DQtSb4nBuq8mmtVhNNXaYj1T8lKZwG2IUirTCeo8fLaVxuHYXGAFUe/exec";
+
+var COMORBS = ["Diabetes","Hypertension","Morbid Obese","Heart Failure","History of PE/DVT","Bed ridden","Active or Recent Bleeding","Prior Stroke/ICH","Recent Surgery","Chronic Kidney Disease","Chronic Liver Disease"];
+var INTERVENTIONS = ["Anticoagulation Only (Oral DOAC)","Anticoagulation Only (LMWH)","Anticoagulation Only (IV UFH)","Systemic Thrombolysis (Full Dose)","Systemic Thrombolysis (Half / Reduced Dose)","Catheter-Directed Thrombolysis / Thrombectomy","Surgical Pulmonary Embolectomy","VA-ECMO + Reperfusion","IVC Filter Placement","Supportive / Conservative Management","Other (Specify in Notes)"];
+var PERT_STATUSES = ["Decision Reached","Under Discussion","Pending Review","Not Required"];
+var YN_FIELDS = [
+  {key:"Symptomatic",label:"Symptomatic PE?",d:false},
+  {key:"History_Cancer",label:"History of Cancer? (+1 sPESI)",d:false},
+  {key:"Chronic_Cardiopulmonary",label:"Chronic Cardiopulmonary Disease? (+1 sPESI)",d:false},
+  {key:"RV_Dilation_Echo",label:"RV Dilation on Echo / CTPA?",d:true},
+  {key:"Elevated_Troponin",label:"Elevated Troponin?",d:true},
+  {key:"Cardiopulmonary_Arrest",label:"Cardiopulmonary Arrest / Shock? (Cat E)",d:true}
+];
+var STATE = {
+  token:"", pendingEmail:"", isNewUser:false, user:null,
+  assessments:[], media:[], opinions:[], modalMedia:[],
+  selectedComorbs:{},
+  yn:{Symptomatic:"Yes",History_Cancer:"No",Chronic_Cardiopulmonary:"No",RV_Dilation_Echo:"No",Elevated_Troponin:"No",Cardiopulmonary_Arrest:"No"},
+  pertToggle:"No", pertManual:false, pertFilter:"active", modalId:null, modalMode:"readonly"
+};
+var toastTimer = null;
+var deferredPrompt = null;
+
+function $(id) { return document.getElementById(id); }
+function esc(s) {
+  return String(s === null || s === undefined ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function kv(l, v) { return '<div class="kv-item"><div class="kv-label">' + esc(l) + '</div><div class="kv-val">' + esc(v) + '</div></div>'; }
+function showLoader(m) { $("loaderText").textContent = m || "Working..."; $("loader").style.display = "flex"; }
+function hideLoader() { $("loader").style.display = "none"; }
+function showToast(m) {
+  var el = $("toast"); el.textContent = m; el.style.display = "block";
+  clearTimeout(toastTimer); toastTimer = setTimeout(function(){ el.style.display = "none"; }, 4200);
+}
+function saveToken(t) { STATE.token = t || ""; try { localStorage.setItem("kauh_pert_token", STATE.token); } catch(e){} }
+function readToken() { try { return localStorage.getItem("kauh_pert_token") || ""; } catch(e){ return ""; } }
+window.onerror = function(m) { hideLoader(); showToast("App error: " + m); };
+
+window.addEventListener("beforeinstallprompt", function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  var btn = $("installAppBtn");
+  if (btn) btn.classList.remove("hidden");
+});
+
+function triggerInstall() {
+  if (!deferredPrompt) { showToast("Tap your browser menu and select Install app or Add to Home Screen."); return; }
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function() {
+    deferredPrompt = null;
+    var btn = $("installAppBtn");
+    if (btn) btn.classList.add("hidden");
+  });
+}
+
+function callServer(act, args, ok, err) {
+  if (!APP_URL || APP_URL.indexOf("PASTE_YOUR") !== -1 || APP_URL.indexOf("/exec") === -1) {
+    err(new Error("Paste your Apps Script /exec URL into APP_URL in index.html first."));
+    return;
+  }
+  fetch(APP_URL, {
+    method:"POST", redirect:"follow", credentials:"omit",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({action:act, args:args || []})
+  }).then(function(r){ return r.text(); }).then(function(txt){
+    var d;
+    try { d = JSON.parse(txt); } catch (e) {
+      if (txt.indexOf("accounts.google.com") !== -1 || txt.indexOf("ServiceLogin") !== -1) {
+        err(new Error("In Apps Script Deploy -> Manage deployments, set Who has access to Anyone."));
+      } else { err(new Error("Unexpected server response.")); }
+      return;
+    }
+    ok(d);
+  }).catch(function(){ err(new Error("Connection failed. Check internet and your /exec URL.")); });
+}
+
+function buildComorbChips() {
+  var h = "";
+  for (var i = 0; i < COMORBS.length; i++) {
+    h += '<div class="chip" onclick="toggleComorb(this,' + i + ')">' + esc(COMORBS[i]) + '</div>';
+  }
+  $("comorbChips").innerHTML = h;
+}
+function toggleComorb(el, i) {
+  var name = COMORBS[i];
+  if (STATE.selectedComorbs[name]) { delete STATE.selectedComorbs[name]; el.classList.remove("selected"); }
+  else { STATE.selectedComorbs[name] = true; el.classList.add("selected"); }
+}
+
+function buildYnButtons() {
+  var h = "";
+  for (var i = 0; i < YN_FIELDS.length; i++) {
+    var f = YN_FIELDS[i];
+    h += '<div class="field"><label>' + esc(f.label) + '</label><div class="yn-group">' +
+      '<button type="button" id="yn_' + f.key + '_Yes" class="yn-btn" onclick="setYn(\'' + f.key + '\',\'Yes\',' + (f.d ? 'true' : 'false') + ')">Yes</button>' +
+      '<button type="button" id="yn_' + f.key + '_No" class="yn-btn" onclick="setYn(\'' + f.key + '\',\'No\',' + (f.d ? 'true' : 'false') + ')">No</button>' +
+      '</div></div>';
+  }
+  $("ynContainer").innerHTML = h;
+  for (var j = 0; j < YN_FIELDS.length; j++) { setYn(YN_FIELDS[j].key, STATE.yn[YN_FIELDS[j].key], YN_FIELDS[j].d); }
+}
+function setYn(k, v, d) {
+  STATE.yn[k] = v;
+  var y = $("yn_" + k + "_Yes"), n = $("yn_" + k + "_No");
+  if (!y || !n) return;
+  y.className = "yn-btn" + (v === "Yes" ? (d ? " active-danger" : " active-yes") : "");
+  n.className = "yn-btn" + (v === "No" ? " active-no" : "");
+  updateLiveCalc();
+}
+
+function requestOtp() {
+  var email = $("loginEmail").value.trim();
+  if (!email) { showToast("Please enter your email address."); return; }
+  showLoader("Sending 6-digit code...");
+  callServer("waRequestOtp", [email], function(res) {
+    hideLoader();
+    if (!res || !res.ok) { showToast((res && res.error) || "Could not send code."); return; }
+    STATE.pendingEmail = res.email; STATE.isNewUser = res.isNewUser;
+    $("authStep1").classList.add("hidden"); $("authStep2").classList.remove("hidden");
+    $("otpSentMsg").textContent = "Code sent to " + res.email + ". Check your inbox (and spam folder).";
+    if (res.isNewUser) $("newUserFields").classList.remove("hidden");
+    else $("newUserFields").classList.add("hidden");
+    showToast("Verification code sent!");
+  }, function(e){ hideLoader(); showToast("Error: " + (e && e.message ? e.message : e)); });
+}
+
+function verifyOtp() {
+  var code = $("otpCode").value.trim(), name = $("regName").value.trim(), pos = $("regPosition").value.trim();
+  if (!code) { showToast("Enter the 6-digit code from your email."); return; }
+  if (STATE.isNewUser && (!name || !pos)) { showToast("Please enter your Name and KAUH Position."); return; }
+  showLoader("Verifying sign-in...");
+  callServer("waVerifyOtp", [STATE.pendingEmail, code, name, pos], function(res) {
+    hideLoader();
+    if (!res || !res.ok) { showToast((res && res.error) || "Verification failed."); return; }
+    saveToken(res.token); loadAppData(false);
+  }, function(e){ hideLoader(); showToast("Error: " + (e && e.message ? e.message : e)); });
+}
+
+function resetAuthStep() { $("authStep2").classList.add("hidden"); $("authStep1").classList.remove("hidden"); $("otpCode").value = ""; }
+function signOut() {
+  var t = STATE.token; saveToken(""); STATE.user = null;
+  $("appShell").classList.add("hidden"); $("pendingScreen").classList.add("hidden"); $("authScreen").classList.remove("hidden");
+  resetAuthStep();
+  if (t) callServer("waLogout", [t], function(){}, function(){});
+}
+
+function loadAppData(msg) {
+  showLoader("Syncing KAUH PERT Database...");
+  callServer("waGetAppData", [STATE.token], function(res) {
+    hideLoader();
+    if (!res || !res.ok) { if (res && res.unauth) { signOut(); return; } showToast((res && res.error) || "Failed to sync."); return; }
+    STATE.user = res.user; STATE.assessments = res.assessments || []; STATE.media = res.media || []; STATE.opinions = res.opinions || [];
+    $("authScreen").classList.add("hidden");
+    if (STATE.user.role === "Pending") {
+      $("appShell").classList.add("hidden"); $("pendingScreen").classList.remove("hidden");
+      $("pendingUserInfo").innerHTML = "<strong>" + esc(STATE.user.name) + "</strong><br>" + esc(STATE.user.position) + "<br>" + esc(STATE.user.email);
+      if (msg) showToast("Still pending admin approval.");
+      return;
+    }
+    $("pendingScreen").classList.add("hidden"); $("appShell").classList.remove("hidden");
+    $("topRoleBadge").textContent = STATE.user.role;
+    var isPert = STATE.user.role === "PERT" || STATE.user.role === "ICU Consultant";
+    if (isPert) $("navPert").classList.remove("hidden"); else $("navPert").classList.add("hidden");
+    renderProfile(); renderPatientsList();
+    if (isPert) renderPertList();
+    if (STATE.modalId) openCaseModal(STATE.modalId, STATE.modalMode);
+    if (msg) showToast("Synced successfully.");
+  }, function(e){ hideLoader(); showToast("Sync error: " + (e && e.message ? e.message : e)); });
+}
+
+function switchTab(id, btn) {
+  var ps = document.querySelectorAll(".tab-panel"); for (var i = 0; i < ps.length; i++) ps[i].classList.add("hidden");
+  $(id).classList.remove("hidden");
+  var ns = document.querySelectorAll(".nav-item"); for (var j = 0; j < ns.length; j++) ns[j].classList.remove("active");
+  if (btn) btn.classList.add("active");
+  window.scrollTo(0, 0);
+}
+
+function computePE() {
+  var age = Number($("fAge").value) || 0, hr = Number($("fHr").value) || 0, sbp = Number($("fSbp").value) || 0, spo2 = Number($("fSpo2").value) || 0;
+  var sPESI = (age > 80 ? 1 : 0) + (STATE.yn.History_Cancer === "Yes" ? 1 : 0) + (STATE.yn.Chronic_Cardiopulmonary === "Yes" ? 1 : 0) + (hr >= 110 ? 1 : 0) + (sbp > 0 && sbp < 100 ? 1 : 0) + (spo2 > 0 && spo2 < 90 ? 1 : 0);
+  var rv = STATE.yn.RV_Dilation_Echo === "Yes", trop = STATE.yn.Elevated_Troponin === "Yes", arrest = STATE.yn.Cardiopulmonary_Arrest === "Yes", symp = STATE.yn.Symptomatic === "Yes";
+  var cat = "Category A (Subclinical)", badge = "ROUTINE", sev = "low", plan = "Outpatient treatment. Oral DOAC.", pert = false;
+  if (arrest) { cat = "Category E (Cardiopulmonary Failure)"; badge = "CRITICAL"; sev = "critical"; plan = "Immediate reperfusion (Systemic thrombolysis/catheter). Activate PERT. ECMO consideration. Parenteral anticoagulation."; pert = true; }
+  else if (sbp > 0 && sbp < 90) { cat = "Category D (Hemodynamic Instability)"; badge = "CRITICAL"; sev = "critical"; plan = "Activate PERT. Immediate reperfusion (thrombolysis/embolectomy) + parenteral anticoagulation."; pert = true; }
+  else if (sPESI >= 1 && rv && trop) { cat = "Category C3 (Elevated Severity, RV+, Trop+)"; badge = "HIGH RISK"; sev = "high"; plan = "Hospitalize (ICU/HDU). LMWH is recommended over UFH. Activate PERT. Monitor closely for deterioration."; pert = true; }
+  else if (sPESI >= 1 && (rv || trop)) { cat = "Category C2 (Elevated Severity, RV+ OR Trop+)"; badge = "HIGH RISK"; sev = "high"; plan = "Hospitalize. LMWH over UFH. Monitor closely. If stable, transition to DOAC within 48h."; }
+  else if (sPESI >= 1) { cat = "Category C1 (Elevated Severity, RV-, Trop-)"; badge = "MODERATE"; sev = "moderate"; plan = "Hospitalize. Anticoagulation (DOAC or LMWH)."; }
+  else if (symp) { cat = "Category B (Low Severity)"; badge = "LOW RISK"; sev = "low"; plan = "Consider early discharge/outpatient treatment. Oral DOAC recommended."; }
+  return {sPESI:sPESI, category:cat, badge:badge, severity:sev, plan:plan, needsPert:pert};
+}
+
+function updateLiveCalc() {
+  var c = computePE(), b = $("liveCalcBox");
+  b.className = "sev-box sev-" + c.severity;
+  b.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;"><span class="pill pill-' + c.severity + '">' + esc(c.badge) + '</span><strong>sPESI Score: ' + c.sPESI + '</strong></div><div style="font-weight:800;font-size:15.5px;margin-bottom:6px;">' + esc(c.category) + '</div><div style="font-size:13.5px;">' + esc(c.plan) + '</div>';
+  if (!STATE.pertManual) applyPertUI(c.needsPert ? "Yes" : "No");
+}
+function setPertToggle(v) { STATE.pertManual = true; applyPertUI(v); }
+function applyPertUI(v) {
+  STATE.pertToggle = v;
+  $("btnPertYes").className = "yn-btn" + (v === "Yes" ? " active-danger" : "");
+  $("btnPertNo").className = "yn-btn" + (v === "No" ? " active-no" : "");
+}
+
+function goWizard(step) {
+  if (step >= 2 && (!$("fMrn").value.trim() || !$("fAge").value.trim())) { showToast("Please enter Patient MRN and Age."); return; }
+  if (step === 3) {
+    if (!$("fHr").value.trim() || !$("fSbp").value.trim() || !$("fSpo2").value.trim()) { showToast("Please enter HR, Systolic BP, and SpO2."); return; }
+    updateLiveCalc();
+  }
+  for (var n = 1; n <= 3; n++) {
+    if (n === step) $("wizPage" + n).classList.remove("hidden"); else $("wizPage" + n).classList.add("hidden");
+    $("st" + n).className = "step-pill" + (n === step ? " active" : (n < step ? " done" : ""));
+  }
+  window.scrollTo(0, 0);
+}
+
+function prepFile(inp, mod, mType, cap, cb) {
+  var file = inp && inp.files && inp.files[0];
+  if (!file) { cb(null, null); return; }
+  if (!file.type || file.type.indexOf("image/") !== 0) {
+    if (file.size > 12 * 1024 * 1024) { cb("Video too large (max 12 MB).", null); return; }
+    var vr = new FileReader();
+    vr.onload = function(){ cb(null, {base64:vr.result.split(",")[1], mimeType:file.type || "video/mp4", fileName:file.name, modality:mod, mediaType:"Video", caption:cap}); };
+    vr.readAsDataURL(file); return;
+  }
+  var rd = new FileReader();
+  rd.onload = function(ev) {
+    var img = new Image();
+    img.onload = function() {
+      var mx = 1600, w = img.width, h = img.height;
+      if (w > mx || h > mx) { if (w > h) { h = Math.round(h * mx / w); w = mx; } else { w = Math.round(w * mx / h); h = mx; } }
+      var cv = document.createElement("canvas"); cv.width = w; cv.height = h; cv.getContext("2d").drawImage(img, 0, 0, w, h);
+      cb(null, {base64:cv.toDataURL("image/jpeg", 0.82).split(",")[1], mimeType:"image/jpeg", fileName:file.name.replace(/\.[^.]+$/,"") + ".jpg", modality:mod, mediaType:"Image", caption:cap});
+    };
+    img.src = ev.target.result;
+  };
+  rd.readAsDataURL(file);
+}
+
+function submitAssessment() {
+  showLoader("Submitting PE case...");
+  prepFile($("fMediaFile"), $("fModality").value, $("fMediaType").value, $("fMediaCaption").value.trim(), function(err, mediaPayload) {
+    if (err) { hideLoader(); showToast(err); return; }
+    var form = {
+      Patient_MRN:$("fMrn").value.trim(), Age:$("fAge").value, Comorbidities:Object.keys(STATE.selectedComorbs),
+      Comorbidities_Notes:$("fComorbNotes").value.trim(), Heart_Rate:$("fHr").value, Systolic_BP:$("fSbp").value, SpO2_Percent:$("fSpo2").value,
+      Symptomatic:STATE.yn.Symptomatic, History_Cancer:STATE.yn.History_Cancer, Chronic_Cardiopulmonary:STATE.yn.Chronic_Cardiopulmonary,
+      RV_Dilation_Echo:STATE.yn.RV_Dilation_Echo, Elevated_Troponin:STATE.yn.Elevated_Troponin, Cardiopulmonary_Arrest:STATE.yn.Cardiopulmonary_Arrest,
+      Activate_PERT:STATE.pertToggle, media:mediaPayload
+    };
+    callServer("waSubmitAssessment", [STATE.token, form], function(res) {
+      hideLoader();
+      if (!res || !res.ok) { showToast((res && res.error) || "Submission failed."); return; }
+      showToast("Case " + res.assessmentId + " saved & PERT alerted!");
+      resetWizard(); loadAppData(false); switchTab("tabPatients", $("navPatients"));
+    }, function(e){ hideLoader(); showToast("Error: " + (e && e.message ? e.message : e)); });
+  });
+}
+
+function resetWizard() {
+  var ids = ["fMrn","fAge","fComorbNotes","fHr","fSbp","fSpo2","fMediaCaption","fMediaFile"];
+  for (var i = 0; i < ids.length; i++) $(ids[i]).value = "";
+  STATE.selectedComorbs = {};
+  var cs = document.querySelectorAll("#comorbChips .chip"); for (var j = 0; j < cs.length; j++) cs[j].classList.remove("selected");
+  STATE.yn = {Symptomatic:"Yes",History_Cancer:"No",Chronic_Cardiopulmonary:"No",RV_Dilation_Echo:"No",Elevated_Troponin:"No",Cardiopulmonary_Arrest:"No"};
+  STATE.pertManual = false; buildYnButtons(); goWizard(1);
+}
+
+function stPill(st) {
+  if (st === "Pending Review") return "pill-pending";
+  if (st === "Under Discussion") return "pill-discussion";
+  if (st === "Decision Reached") return "pill-closed";
+  return "pill-status";
+}
+
+function cardHtml(a, mode) {
+  var mc = 0, oc = 0, i;
+  for (i = 0; i < STATE.media.length; i++) if (STATE.media[i].Assessment_ID === a.Assessment_ID) mc++;
+  if (mode === "pert") for (i = 0; i < STATE.opinions.length; i++) if (STATE.opinions[i].Assessment_ID === a.Assessment_ID) oc++;
+  var mr = (mc > 0 ? "Media: " + mc + " | " : "") + (mode === "pert" ? "Opinions: " + oc + " | " : "") + esc(a.Timestamp);
+  return '<div class="patient-card border-' + a.calc.severity + '" onclick="openCaseModal(\'' + esc(a.Assessment_ID) + '\',\'' + mode + '\')">' +
+    '<div class="pc-top"><span class="pc-mrn">MRN: ' + esc(a.Patient_MRN) + '</span><span class="pill pill-' + a.calc.severity + '">' + esc(a.calc.badge) + '</span></div>' +
+    '<div style="font-weight:700;font-size:13.5px;margin-bottom:4px;">' + esc(a.calc.category) + '</div>' +
+    '<div class="pc-meta" style="margin-bottom:7px;">Age ' + esc(a.Age) + ' | sPESI: <strong>' + a.calc.sPESI + '</strong> | HR ' + esc(a.Heart_Rate) + ' | SBP ' + esc(a.Systolic_BP) + ' | SpO2 ' + esc(a.SpO2_Percent) + '&#37;</div>' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;"><span class="pill ' + stPill(a.PERT_Status) + '">' + esc(a.PERT_Status) + '</span><span class="small-muted">' + mr + '</span></div></div>';
+}
+
+function renderPatientsList() {
+  var q = ($("searchPatients").value || "").trim().toLowerCase(), h = "";
+  for (var i = 0; i < STATE.assessments.length; i++) {
+    var a = STATE.assessments[i];
+    if (!q || a.Patient_MRN.toLowerCase().indexOf(q) !== -1 || a.calc.category.toLowerCase().indexOf(q) !== -1 || a.Assessment_ID.toLowerCase().indexOf(q) !== -1) h += cardHtml(a, "readonly");
+  }
+  $("patientsList").innerHTML = h || '<div class="card small-muted" style="text-align:center;">No PE assessments found.</div>';
+}
+
+function setPertFilter(f, btn) {
+  STATE.pertFilter = f;
+  var bs = document.querySelectorAll("#tabPert .filter-btn"); for (var i = 0; i < bs.length; i++) bs[i].classList.remove("active");
+  if (btn) btn.classList.add("active");
+  renderPertList();
+}
+
+function renderPertList() {
+  var h = "";
+  for (var i = 0; i < STATE.assessments.length; i++) {
+    var a = STATE.assessments[i], ok = true;
+    if (STATE.pertFilter === "active") ok = a.PERT_Status === "Pending Review" || a.PERT_Status === "Under Discussion";
+    else if (STATE.pertFilter === "closed") ok = a.PERT_Status === "Decision Reached";
+    if (ok) h += cardHtml(a, "pert");
+  }
+  $("pertList").innerHTML = h || '<div class="card small-muted" style="text-align:center;">No cases in this PERT queue.</div>';
+}
+
+function renderProfile() {
+  var u = STATE.user;
+  $("profileGrid").innerHTML = kv("Name", u.name) + kv("Role", u.role) + kv("KAUH Position", u.position) + kv("Email", u.email);
+}
+
+function openCaseModal(id, mode) {
+  var a = null, i;
+  for (i = 0; i < STATE.assessments.length; i++) if (STATE.assessments[i].Assessment_ID === id) { a = STATE.assessments[i]; break; }
+  if (!a) return;
+  var isPert = STATE.user.role === "PERT" || STATE.user.role === "ICU Consultant";
+  var isCons = STATE.user.role === "ICU Consultant";
+  var showPert = isPert && mode === "pert";
+  STATE.modalId = id; STATE.modalMode = mode;
+  $("modalTitle").textContent = "MRN: " + a.Patient_MRN;
+  $("modalSub").textContent = a.Assessment_ID + " | " + a.Timestamp;
+
+  var cMed = [], cOps = [];
+  for (i = 0; i < STATE.media.length; i++) if (STATE.media[i].Assessment_ID === id) cMed.push(STATE.media[i]);
+  if (showPert) for (i = 0; i < STATE.opinions.length; i++) if (STATE.opinions[i].Assessment_ID === id) cOps.push(STATE.opinions[i]);
+  STATE.modalMedia = cMed;
+
+  var h = '<div class="sev-box sev-' + a.calc.severity + '"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;"><span class="pill pill-' + a.calc.severity + '">' + esc(a.calc.badge) + '</span><strong>sPESI: ' + a.calc.sPESI + '</strong></div><div style="font-weight:800;font-size:15px;margin-bottom:5px;">' + esc(a.calc.category) + '</div><div style="font-size:13.5px;">' + esc(a.calc.plan) + '</div></div>';
+  h += '<div class="card"><div class="card-title">Clinical Summary (Read-Only)</div><div class="kv-grid">' +
+    kv("Age", a.Age + " yrs") + kv("Heart Rate", a.Heart_Rate + " bpm") + kv("Systolic BP", a.Systolic_BP + " mmHg") + kv("SpO2", a.SpO2_Percent + "%") +
+    kv("RV Dilation", a.RV_Dilation_Echo) + kv("Elevated Troponin", a.Elevated_Troponin) + kv("Arrest / Shock", a.Cardiopulmonary_Arrest) +
+    kv("Symptomatic", a.Symptomatic) + kv("History of Cancer", a.History_Cancer) + kv("Cardiopulmonary Dis.", a.Chronic_Cardiopulmonary) +
+    '</div><div class="kv-item" style="margin-top:8px;"><div class="kv-label">Comorbidities</div><div class="kv-val">' + esc(a.Comorbidities || "None recorded") + '</div>' +
+    (a.Comorbidities_Notes ? '<div class="small-muted" style="margin-top:4px;">Notes: ' + esc(a.Comorbidities_Notes) + '</div>' : '') + '</div></div>';
+
+  h += '<div class="card"><div class="card-title"><span>PERT Status</span><span class="pill ' + stPill(a.PERT_Status) + '">' + esc(a.PERT_Status) + '</span></div>' +
+    (a.PERT_Final_Intervention ? '<div class="kv-item" style="background:#E8F5E9;border-color:#A5D6A7;"><div class="kv-label">Final PERT Decision</div><div class="kv-val">' + esc(a.PERT_Final_Intervention) + '</div>' + (a.PERT_Signoff_By ? '<div class="small-muted" style="margin-top:3px;">Signed off by: ' + esc(a.PERT_Signoff_By) + '</div>' : '') + '</div>' : '<div class="small-muted">No final PERT intervention recorded yet.</div>') + '</div>';
+
+  h += '<div class="card"><div class="card-title">Patient Media (' + cMed.length + ')</div>';
+  if (cMed.length) {
+    for (i = 0; i < cMed.length; i++) {
+      h += '<div class="media-row"><div><strong>' + esc(cMed[i].Modality || "Media") + ' (' + esc(cMed[i].Media_Type || "Image") + ')</strong><div class="small-muted">' + esc(cMed[i].Caption || "No caption") + '</div></div><button type="button" class="btn btn-secondary btn-sm" onclick="loadMedia(' + i + ')">View</button></div><div id="mp_' + i + '" class="preview-box"></div>';
+    }
+  } else { h += '<div class="small-muted" style="margin-bottom:10px;">No ECHO/CTPA files attached yet.</div>'; }
+  h += '<details style="margin-top:10px;"><summary style="cursor:pointer;font-weight:700;color:var(--kd);font-size:13.5px;">+ Attach Additional Media</summary><div style="margin-top:10px;"><div class="grid-2"><div class="field"><label>Modality</label><select id="addMod"><option>Echocardiography</option><option>CTPA</option><option>ECG</option><option>Doppler US</option><option>Chest X-Ray</option><option>Other</option></select></div><div class="field"><label>Type</label><select id="addMType"><option>Image</option><option>Video</option></select></div></div><div class="field"><input type="file" id="addMFile" accept="image/*,video/*"></div><div class="field"><input type="text" id="addMCap" placeholder="Caption (de-identified)"></div><button type="button" class="btn btn-primary btn-sm" onclick="uploadExtra(\'' + esc(a.Assessment_ID) + '\')">Upload Media</button></div></details></div>';
+
+  if (showPert) {
+    var io = ""; for (i = 0; i < INTERVENTIONS.length; i++) io += '<option value="' + esc(INTERVENTIONS[i]) + '">' + esc(INTERVENTIONS[i]) + '</option>';
+    h += '<div class="card"><div class="card-title">Multidisciplinary PERT Opinions (' + cOps.length + ')</div>';
+    if (cOps.length) {
+      for (i = 0; i < cOps.length; i++) {
+        h += '<div class="opinion-card"><div style="font-weight:800;color:var(--kd);font-size:14px;">' + esc(cOps[i].Doctor_Name) + '</div><div class="small-muted" style="margin-bottom:5px;">' + esc(cOps[i].Doctor_Position) + ' | ' + esc(cOps[i].Timestamp) + '</div><div style="font-weight:700;font-size:13.5px;margin-bottom:3px;">Recommendation: ' + esc(cOps[i].Recommended_Intervention) + '</div>' + (cOps[i].Clinical_Notes ? '<div style="font-size:13px;">' + esc(cOps[i].Clinical_Notes) + '</div>' : '') + '</div>';
+      }
+    } else { h += '<div class="small-muted" style="margin-bottom:10px;">No PERT opinions submitted yet.</div>'; }
+    h += '<div style="border-top:1px solid var(--bd);padding-top:12px;margin-top:10px;"><div class="field"><label>Your Recommended Intervention</label><select id="opInt">' + io + '</select></div><div class="field"><label>Clinical Rationale / Notes</label><textarea id="opNotes" placeholder="Enter your specialty assessment..."></textarea></div><button type="button" class="btn btn-primary" onclick="submitOpinion(\'' + esc(a.Assessment_ID) + '\')">Submit PERT Opinion</button></div></div>';
+
+    if (isCons) {
+      var so = ""; for (i = 0; i < PERT_STATUSES.length; i++) so += '<option value="' + esc(PERT_STATUSES[i]) + '"' + (PERT_STATUSES[i] === "Decision Reached" ? ' selected' : '') + '>' + esc(PERT_STATUSES[i]) + '</option>';
+      h += '<div class="card" style="border:2px solid var(--kg);background:#F5FBF7;"><div class="card-title">ICU Consultant - Close PERT Case</div><div class="field"><label>Final PERT Status</label><select id="clStat">' + so + '</select></div><div class="field"><label>PERT Final Intervention</label><select id="clSel" onchange="if(this.value!==\'CUSTOM\') $(\'clCustom\').value=this.value;">' + io + '<option value="CUSTOM">Custom / Combined Plan...</option></select></div><div class="field"><label>Final Decision Details (Saved to Chart)</label><input type="text" id="clCustom" value="' + esc(a.PERT_Final_Intervention || INTERVENTIONS[0]) + '"></div><button type="button" class="btn btn-primary" onclick="closeCase(\'' + esc(a.Assessment_ID) + '\')">Sign Off &amp; Close PERT Case</button></div>';
+    }
+  }
+  $("modalBody").innerHTML = h;
+  $("caseModal").classList.add("open");
+}
+
+function closeModal() { $("caseModal").classList.remove("open"); STATE.modalId = null; }
+
+function loadMedia(idx) {
+  var m = STATE.modalMedia[idx], box = $("mp_" + idx);
+  if (!m || !box) return;
+  var ref = m.Media_Type === "Video" ? (m.Video_Upload || m.Image_Upload) : (m.Image_Upload || m.Video_Upload);
+  box.innerHTML = '<div class="small-muted" style="padding:6px;">Loading secure media...</div>';
+  callServer("waGetMediaData", [STATE.token, ref], function(res) {
+    if (!res || !res.ok) { box.innerHTML = '<div class="small-muted" style="color:var(--cr);padding:6px;">' + esc((res && res.error) || "Could not load file.") + '</div>'; return; }
+    box.innerHTML = (res.mimeType && res.mimeType.indexOf("video/") === 0) ? '<video controls playsinline src="' + res.dataUrl + '"></video>' : '<img src="' + res.dataUrl + '" alt="Clinical Media">';
+  }, function(e){ box.innerHTML = '<div class="small-muted" style="color:var(--cr);">Error: ' + esc(e && e.message ? e.message : e) + '</div>'; });
+}
+
+function uploadExtra(id) {
+  var inp = $("addMFile"); if (!inp.files || !inp.files[0]) { showToast("Select an image or video first."); return; }
+  showLoader("Uploading media securely...");
+  prepFile(inp, $("addMod").value, $("addMType").value, $("addMCap").value.trim(), function(err, payload) {
+    if (err) { hideLoader(); showToast(err); return; }
+    callServer("waUploadMedia", [STATE.token, id, payload], function(res) {
+      hideLoader(); if (!res || !res.ok) { showToast((res && res.error) || "Upload failed."); return; }
+      showToast("Media attached!"); loadAppData(false);
+    }, function(e){ hideLoader(); showToast("Error: " + (e && e.message ? e.message : e)); });
+  });
+}
+
+function submitOpinion(id) {
+  showLoader("Saving PERT opinion...");
+  callServer("waSubmitOpinion", [STATE.token, {Assessment_ID:id, Recommended_Intervention:$("opInt").value, Clinical_Notes:$("opNotes").value.trim()}], function(res) {
+    hideLoader(); if (!res || !res.ok) { showToast((res && res.error) || "Failed to save opinion."); return; }
+    showToast("PERT opinion recorded."); loadAppData(false);
+  }, function(e){ hideLoader(); showToast("Error: " + (e && e.message ? e.message : e)); });
+}
+
+function closeCase(id) {
+  var fin = $("clCustom").value.trim(); if (!fin) { showToast("Enter the final intervention decision."); return; }
+  showLoader("Signing off PERT case...");
+  callServer("waClosePertCase", [STATE.token, {Assessment_ID:id, PERT_Status:$("clStat").value, PERT_Final_Intervention:fin}], function(res) {
+    hideLoader(); if (!res || !res.ok) { showToast((res && res.error) || "Failed to close case."); return; }
+    showToast("PERT case signed off & closed."); loadAppData(false);
+  }, function(e){ hideLoader(); showToast("Error: " + (e && e.message ? e.message : e)); });
+}
+
+function initKauh() {
+  buildComorbChips(); buildYnButtons();
+  var t = readToken(); if (t) { STATE.token = t; loadAppData(false); }
+  if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js").catch(function(){}); }
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initKauh); else initKauh();
+</script>
+</body>
+<!-- END OF KAUH PERT -->
+</html>
