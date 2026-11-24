@@ -452,12 +452,16 @@ function computePE() {
   var sPESI = (age > 80 ? 1 : 0) + (STATE.yn.History_Cancer === "Yes" ? 1 : 0) + (STATE.yn.Chronic_Cardiopulmonary === "Yes" ? 1 : 0) + (hr >= 110 ? 1 : 0) + (sbp > 0 && sbp < 100 ? 1 : 0) + (spo2 > 0 && spo2 < 90 ? 1 : 0);
   var rv = STATE.yn.RV_Dilation_Echo === "Yes", trop = STATE.yn.Elevated_Troponin === "Yes", arrest = STATE.yn.Cardiopulmonary_Arrest === "Yes", symp = STATE.yn.Symptomatic === "Yes";
 
+  if (!symp) {
+    return { sPESI: sPESI, category: "Category A (Subclinical)", badge: "ROUTINE", severity: "low", plan: "Outpatient treatment. Oral DOAC.", needsPert: false };
+  }
+
   var isNiv = o2 === "NIV / Mechanical Ventilation";
   var isHighO2 = o2 === "High-Flow O2 (> 6 L/min / NRB)";
   var hasRespMod = isNiv || isHighO2 || o2 === "Low-Flow O2 (<= 6 L/min)" || (spo2 > 0 && spo2 < 90) || rr > 30;
   var rTag = hasRespMod ? "-R" : "";
 
-  var cat = "Category A (Subclinical)", badge = "ROUTINE", sev = "low", plan = "Outpatient treatment. Oral DOAC.", pert = false;
+  var cat = "Category B (Low Severity)", badge = "LOW RISK", sev = "low", plan = "Consider early discharge/outpatient treatment. Oral DOAC recommended.", pert = false;
   if (arrest || isNiv) {
     cat = "Category E" + rTag + " (Cardiopulmonary Failure)"; badge = "CRITICAL"; sev = "critical";
     plan = "Immediate reperfusion (Systemic thrombolysis/catheter). Activate PERT. ECMO consideration. Parenteral anticoagulation."; pert = true;
@@ -473,11 +477,8 @@ function computePE() {
   } else if (sPESI >= 1) {
     cat = "Category C1" + rTag + " (Elevated Severity, RV-, Trop-)"; badge = "MODERATE"; sev = "moderate";
     plan = "Hospitalize. Anticoagulation (DOAC or LMWH).";
-  } else if (symp) {
-    cat = "Category B (Low Severity)"; badge = "LOW RISK"; sev = "low";
-    plan = "Consider early discharge/outpatient treatment. Oral DOAC recommended.";
   }
-  return {sPESI:sPESI, category:cat, badge:badge, severity:sev, plan:plan, needsPert:pert};
+  return { sPESI: sPESI, category: cat, badge: badge, severity: sev, plan: plan, needsPert: pert };
 }
 
 function updateLiveCalc() {
