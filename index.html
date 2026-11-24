@@ -369,7 +369,7 @@ function setYn(k, v, d) {
   updateLiveCalc();
 }
 
-ffunction requestOtp() {
+function requestOtp() {
   var email = $("loginEmail").value.trim().toLowerCase();
   if (!email) { showToast("Please enter your hospital email address."); return; }
   var adminExceptions = ["dryasserown@gmail.com", "kauhicumma@gmail.com"];
