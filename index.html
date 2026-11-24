@@ -111,11 +111,11 @@
 
   <div id="authScreen" class="splash-wrap">
     <div class="auth-card">
-      <img class="auth-logo" src="https://drive.google.com/thumbnail?id=1KM5xpic7i7a5QFCKZdXfpLR_8-65RWqf&sz=w400" alt="KAUH Logo">
+      <img class="auth-logo" src="icon.png" alt="KAUH Logo">
       <h1 class="auth-title">KAUH PERT</h1>
       <p class="auth-sub">King Abdulaziz University Hospital<br>Pulmonary Embolism Response Team</p>
       <div id="authStep1">
-        <div class="field"><label for="loginEmail">Hospital or Personal Email</label><input type="email" id="loginEmail" placeholder="doctor@kau.edu.sa or gmail.com" autocomplete="email"></div>
+        <div class="field"><label for="loginEmail">Hospital Email</label><input type="email" id="loginEmail" placeholder="doctor@kau.edu.sa" autocomplete="email"></div>
         <button type="button" class="btn btn-primary" onclick="requestOtp()">Send 6-Digit Sign-In Code</button>
         <p class="small-muted" style="margin-top:12px;">You will receive a one-time code by email. Your phone stays signed in for 14 days.</p>
       </div>
@@ -134,7 +134,7 @@
 
   <div id="pendingScreen" class="splash-wrap hidden">
     <div class="auth-card">
-      <img class="auth-logo" src="https://drive.google.com/thumbnail?id=1KM5xpic7i7a5QFCKZdXfpLR_8-65RWqf&sz=w400" alt="KAUH Logo">
+      <img class="auth-logo" src="icon.png" alt="KAUH Logo">
       <h2 class="auth-title">Access Pending Approval</h2>
       <p class="auth-sub" id="pendingUserInfo"></p>
       <div class="sev-box sev-moderate" style="text-align:left;font-size:13.5px;">Your registration request has been sent to the KAUH ICU Admin. Patient charts remain locked until your role is approved.</div>
@@ -146,7 +146,7 @@
   <div id="appShell" class="hidden">
     <header class="topbar">
       <div class="brand-left">
-        <img src="https://drive.google.com/thumbnail?id=1KM5xpic7i7a5QFCKZdXfpLR_8-65RWqf&sz=w400" alt="KAUH">
+        <img src="icon.png" alt="KAUH">
         <div><div class="brand-name">KAUH PERT</div><span class="brand-role" id="topRoleBadge">Clinician</span></div>
       </div>
       <button type="button" class="icon-btn" onclick="loadAppData(true)">Sync</button>
