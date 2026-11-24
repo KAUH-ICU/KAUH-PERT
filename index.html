@@ -369,9 +369,14 @@ function setYn(k, v, d) {
   updateLiveCalc();
 }
 
-function requestOtp() {
-  var email = $("loginEmail").value.trim();
-  if (!email) { showToast("Please enter your email address."); return; }
+ffunction requestOtp() {
+  var email = $("loginEmail").value.trim().toLowerCase();
+  if (!email) { showToast("Please enter your hospital email address."); return; }
+  var adminExceptions = ["dryasserown@gmail.com", "kauhicumma@gmail.com"];
+  if (email.slice(-11) !== "@kau.edu.sa" && adminExceptions.indexOf(email) === -1) {
+    showToast("Warning: Only KAUH hospital emails (@kau.edu.sa) are allowed.");
+    return;
+  }
   showLoader("Sending 6-digit code...");
   callServer("waRequestOtp", [email], function(res) {
     hideLoader();
