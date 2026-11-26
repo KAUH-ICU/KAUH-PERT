@@ -182,6 +182,22 @@
             <div class="field"><label for="fRr">Resp. Rate (/min)</label><input type="number" id="fRr" placeholder="22" inputmode="numeric" oninput="updateLiveCalc()"></div>
             <div class="field"><label for="fO2">O2 / Ventilatory Support</label><select id="fO2" onchange="updateLiveCalc()"><option value="Room Air">Room Air</option><option value="Low-Flow O2 (<= 6 L/min)">Low-Flow O2 (&le; 6 L/min)</option><option value="High-Flow O2 (> 6 L/min / NRB)">High-Flow O2 (&gt; 6 L/min / NRB)</option><option value="NIV / Mechanical Ventilation">NIV / Mechanical Ventilation</option></select></div>
           </div>
+          <div class="field">
+            <label>Clinical Presentation</label>
+            <div class="grid-3">
+              <button type="button" id="pres_Symp" class="yn-btn active-yes" onclick="setPresentation('Symptomatic PE')">Symptomatic</button>
+              <button type="button" id="pres_Sed" class="yn-btn" onclick="setPresentation('Sedated / Unable to Assess')">Sedated / Coma</button>
+              <button type="button" id="pres_Inc" class="yn-btn" onclick="setPresentation('Incidental / Asymptomatic')">Incidental</button>
+            </div>
+          </div>
+          <div id="attrBox" class="field hidden" style="background:#FFF8E1;padding:10px;border-radius:10px;border:1px solid #FFE082;">
+            <label style="color:#6B4A00;">Is this instability/hypoxia primarily attributed to PE?</label>
+            <div class="yn-group">
+              <button type="button" id="attr_Yes" class="yn-btn active-danger" onclick="setAttribution('Yes / Suspected')">Yes / Suspected</button>
+              <button type="button" id="attr_No" class="yn-btn" onclick="setAttribution('No - Other ICU Cause')">No — Other ICU Cause</button>
+            </div>
+          </div>
+          <p class="small-muted" style="margin:0 0 12px;">For stable patients, confirm CTPA/Echo RV status and Troponin before submitting. Unstable (Cat D/E) cases may be submitted immediately.</p>
           <div id="ynContainer"></div>
           <div class="grid-2" style="margin-top:14px;">
             <button type="button" class="btn btn-secondary" onclick="goWizard(1)">&larr; Back</button>
@@ -268,7 +284,6 @@ var COMORBS = ["Diabetes","Hypertension","Morbid Obese","Heart Failure","History
 var INTERVENTIONS = ["Anticoagulation Only (Oral DOAC)","Anticoagulation Only (LMWH)","Anticoagulation Only (IV UFH)","Systemic Thrombolysis (Full Dose)","Systemic Thrombolysis (Half / Reduced Dose)","Catheter-Directed Thrombolysis / Thrombectomy","Surgical Pulmonary Embolectomy","VA-ECMO + Reperfusion","IVC Filter Placement","Supportive / Conservative Management","Other (Specify in Notes)"];
 var PERT_STATUSES = ["Decision Reached","Under Discussion","Pending Review","Not Required"];
 var YN_FIELDS = [
-  {key:"Symptomatic",label:"Symptomatic PE?",d:false},
   {key:"History_Cancer",label:"History of Cancer? (+1 sPESI)",d:false},
   {key:"Chronic_Cardiopulmonary",label:"Chronic Cardiopulmonary Disease? (+1 sPESI)",d:false},
   {key:"RV_Dilation_Echo",label:"RV Dilation on Echo / CTPA?",d:true},
@@ -279,7 +294,7 @@ var STATE = {
   token:"", pendingEmail:"", isNewUser:false, user:null,
   assessments:[], media:[], opinions:[], modalMedia:[],
   selectedComorbs:{},
-  yn:{Symptomatic:"Yes",History_Cancer:"No",Chronic_Cardiopulmonary:"No",RV_Dilation_Echo:"No",Elevated_Troponin:"No",Cardiopulmonary_Arrest:"No"},
+  presentation:"Symptomatic PE", attribution:"Yes / Suspected", yn:{,History_Cancer:"No",Chronic_Cardiopulmonary:"No",RV_Dilation_Echo:"No",Elevated_Troponin:"No",Cardiopulmonary_Arrest:"No"},
   pertToggle:"No", pertManual:false, pertFilter:"active", modalId:null, modalMode:"readonly"
 };
 var toastTimer = null;
@@ -446,41 +461,72 @@ function switchTab(id, btn) {
   window.scrollTo(0, 0);
 }
 
+function setPresentation(val) {
+  STATE.presentation = val;
+  $("pres_Symp").className = "yn-btn" + (val === "Symptomatic PE" ? " active-yes" : "");
+  $("pres_Sed").className = "yn-btn" + (val === "Sedated / Unable to Assess" ? " active-yes" : "");
+  $("pres_Inc").className = "yn-btn" + (val === "Incidental / Asymptomatic" ? " active-no" : "");
+  updateLiveCalc();
+}
+
+function setAttribution(val) {
+  STATE.attribution = val;
+  $("attr_Yes").className = "yn-btn" + (val === "Yes / Suspected" ? " active-danger" : "");
+  $("attr_No").className = "yn-btn" + (val === "No - Other ICU Cause" ? " active-no" : "");
+  updateLiveCalc();
+}
+
 function computePE() {
   var age = Number($("fAge").value) || 0, hr = Number($("fHr").value) || 0, sbp = Number($("fSbp").value) || 0, spo2 = Number($("fSpo2").value) || 0;
   var rr = Number($("fRr").value) || 0, o2 = $("fO2").value || "Room Air";
   var sPESI = (age > 80 ? 1 : 0) + (STATE.yn.History_Cancer === "Yes" ? 1 : 0) + (STATE.yn.Chronic_Cardiopulmonary === "Yes" ? 1 : 0) + (hr >= 110 ? 1 : 0) + (sbp > 0 && sbp < 100 ? 1 : 0) + (spo2 > 0 && spo2 < 90 ? 1 : 0);
-  var rv = STATE.yn.RV_Dilation_Echo === "Yes", trop = STATE.yn.Elevated_Troponin === "Yes", arrest = STATE.yn.Cardiopulmonary_Arrest === "Yes", symp = STATE.yn.Symptomatic === "Yes";
-
-  if (!symp) {
-    return { sPESI: sPESI, category: "Category A (Subclinical)", badge: "ROUTINE", severity: "low", plan: "Outpatient treatment. Oral DOAC.", needsPert: false };
-  }
+  var rv = STATE.yn.RV_Dilation_Echo === "Yes", trop = STATE.yn.Elevated_Troponin === "Yes", arrest = STATE.yn.Cardiopulmonary_Arrest === "Yes";
 
   var isNiv = o2 === "NIV / Mechanical Ventilation";
   var isHighO2 = o2 === "High-Flow O2 (> 6 L/min / NRB)";
-  var hasRespMod = isNiv || isHighO2 || o2 === "Low-Flow O2 (<= 6 L/min)" || (spo2 > 0 && spo2 < 90) || rr > 30;
+  var isLowO2 = o2 === "Low-Flow O2 (<= 6 L/min)";
+  var isUnstable = arrest || (sbp > 0 && sbp < 90) || (spo2 > 0 && spo2 < 90) || o2 !== "Room Air";
+
+  var attrEl = $("attrBox");
+  if (attrEl) {
+    if (isUnstable) attrEl.classList.remove("hidden");
+    else attrEl.classList.add("hidden");
+  }
+
+  var isIncidental = STATE.presentation === "Incidental / Asymptomatic";
+  var isConfounded = isUnstable && STATE.attribution === "No - Other ICU Cause";
+  var hasRespMod = isNiv || isHighO2 || isLowO2 || (spo2 > 0 && spo2 < 90) || rr > 30;
   var rTag = hasRespMod ? "-R" : "";
 
-  var cat = "Category B (Low Severity)", badge = "LOW RISK", sev = "low", plan = "Consider early discharge/outpatient treatment. Oral DOAC recommended.", pert = false;
-  if (arrest || isNiv) {
-    cat = "Category E" + rTag + " (Cardiopulmonary Failure)"; badge = "CRITICAL"; sev = "critical";
-    plan = "Immediate reperfusion (Systemic thrombolysis/catheter). Activate PERT. ECMO consideration. Parenteral anticoagulation."; pert = true;
-  } else if ((sbp > 0 && sbp < 90) || isHighO2) {
-    cat = "Category D" + rTag + " (Hemodynamic / Respiratory Instability)"; badge = "CRITICAL"; sev = "critical";
-    plan = "Activate PERT. Immediate reperfusion (thrombolysis/embolectomy) + parenteral anticoagulation."; pert = true;
-  } else if (sPESI >= 1 && rv && trop) {
-    cat = "Category C3" + rTag + " (Elevated Severity, RV+, Trop+)"; badge = "HIGH RISK"; sev = "high";
-    plan = "Hospitalize (ICU/HDU). LMWH is recommended over UFH. Activate PERT. Monitor closely for deterioration."; pert = true;
-  } else if (sPESI >= 1 && (rv || trop)) {
-    cat = "Category C2" + rTag + " (Elevated Severity, RV+ OR Trop+)"; badge = "HIGH RISK"; sev = "high";
-    plan = "Hospitalize. LMWH over UFH. Monitor closely. If stable, transition to DOAC within 48h.";
-  } else if (sPESI >= 1) {
-    cat = "Category C1" + rTag + " (Elevated Severity, RV-, Trop-)"; badge = "MODERATE"; sev = "moderate";
-    plan = "Hospitalize. Anticoagulation (DOAC or LMWH).";
+  if (isIncidental && !isUnstable) {
+    return { sPESI: sPESI, category: "Category A (Subclinical)", badge: "ROUTINE", severity: "low", plan: "Outpatient treatment. Oral DOAC.", needsPert: false };
   }
-  return { sPESI: sPESI, category: cat, badge: badge, severity: sev, plan: plan, needsPert: pert };
-}
+  if (isIncidental && isConfounded) {
+    return { sPESI: sPESI, category: "Category A (Subclinical — Inpatient/ICU)", badge: "ICU CONFOUNDED", severity: "low", plan: "Inpatient/ICU anticoagulation per primary diagnosis and bleeding risk. Correlate with ICU team.", needsPert: false };
+  }
+  if (isConfounded) {
+    if (rv && trop) return { sPESI: sPESI, category: "Category C3 (ICU Confounded, RV+, Trop+)", badge: "HIGH RISK", severity: "high", plan: "Instability attributed to non-PE cause. Anticoagulate per bleeding risk; consider PERT if PE is contributing.", needsPert: false };
+    if (rv || trop) return { sPESI: sPESI, category: "Category C2 (ICU Confounded, RV+ OR Trop+)", badge: "MODERATE", severity: "moderate", plan: "Instability attributed to non-PE cause. Anticoagulate per bleeding risk; monitor RV function.", needsPert: false };
+    return { sPESI: sPESI, category: "Category C1 (ICU Confounded, RV-, Trop-)", badge: "MODERATE", severity: "moderate", plan: "Instability attributed to non-PE cause. Anticoagulate per bleeding risk; escalate only if PE is contributing.", needsPert: false };
+  }
 
+  if (arrest || isNiv) {
+    return { sPESI: sPESI, category: "Category E" + rTag + " (Cardiopulmonary Failure)", badge: "CRITICAL", severity: "critical", plan: "Immediate reperfusion (Systemic thrombolysis/catheter). Activate PERT. ECMO consideration. Parenteral anticoagulation.", needsPert: true };
+  }
+  if ((sbp > 0 && sbp < 90) || isHighO2) {
+    return { sPESI: sPESI, category: "Category D" + rTag + " (Hemodynamic / Respiratory Instability)", badge: "CRITICAL", severity: "critical", plan: "Activate PERT. Immediate reperfusion (thrombolysis/embolectomy) + parenteral anticoagulation.", needsPert: true };
+  }
+  if (sPESI >= 1 && rv && trop) {
+    return { sPESI: sPESI, category: "Category C3" + rTag + " (Elevated Severity, RV+, Trop+)", badge: "HIGH RISK", severity: "high", plan: "Hospitalize (ICU/HDU). LMWH is recommended over UFH. Activate PERT. Monitor closely for deterioration.", needsPert: true };
+  }
+  if (sPESI >= 1 && (rv || trop)) {
+    return { sPESI: sPESI, category: "Category C2" + rTag + " (Elevated Severity, RV+ OR Trop+)", badge: "HIGH RISK", severity: "high", plan: "Hospitalize. LMWH over UFH. Monitor closely. If stable, transition to DOAC within 48h.", needsPert: false };
+  }
+  if (sPESI >= 1) {
+    return { sPESI: sPESI, category: "Category C1" + rTag + " (Elevated Severity, RV-, Trop-)", badge: "MODERATE", severity: "moderate", plan: "Hospitalize. Anticoagulation (DOAC or LMWH).", needsPert: false };
+  }
+  return { sPESI: sPESI, category: "Category B (Low Severity)", badge: "LOW RISK", severity: "low", plan: "Consider early discharge/outpatient treatment. Oral DOAC recommended.", needsPert: false };
+}
 function updateLiveCalc() {
   var c = computePE(), b = $("liveCalcBox");
   b.className = "sev-box sev-" + c.severity;
@@ -537,7 +583,7 @@ function submitAssessment() {
     var form = {
       Patient_MRN:$("fMrn").value.trim(), Age:$("fAge").value, Comorbidities:Object.keys(STATE.selectedComorbs),
       Comorbidities_Notes:$("fComorbNotes").value.trim(), Heart_Rate:$("fHr").value, Systolic_BP:$("fSbp").value, SpO2_Percent:$("fSpo2").value, Respiratory_Rate:$("fRr").value, O2_Support:$("fO2").value,
-      Symptomatic:STATE.yn.Symptomatic, History_Cancer:STATE.yn.History_Cancer, Chronic_Cardiopulmonary:STATE.yn.Chronic_Cardiopulmonary,
+      Symptomatic:STATE.presentation, PE_Attribution:STATE.attribution, History_Cancer:STATE.yn.History_Cancer, Chronic_Cardiopulmonary:STATE.yn.Chronic_Cardiopulmonary,
       RV_Dilation_Echo:STATE.yn.RV_Dilation_Echo, Elevated_Troponin:STATE.yn.Elevated_Troponin, Cardiopulmonary_Arrest:STATE.yn.Cardiopulmonary_Arrest,
       Activate_PERT:STATE.pertToggle, media:mediaPayload
     };
@@ -556,7 +602,9 @@ function resetWizard() {
   for (var i = 0; i < ids.length; i++) $(ids[i]).value = "";
   STATE.selectedComorbs = {};
   var cs = document.querySelectorAll("#comorbChips .chip"); for (var j = 0; j < cs.length; j++) cs[j].classList.remove("selected");
-  STATE.yn = {Symptomatic:"Yes",History_Cancer:"No",Chronic_Cardiopulmonary:"No",RV_Dilation_Echo:"No",Elevated_Troponin:"No",Cardiopulmonary_Arrest:"No"};
+  STATE.yn = {History_Cancer:"No",Chronic_Cardiopulmonary:"No",RV_Dilation_Echo:"No",Elevated_Troponin:"No",Cardiopulmonary_Arrest:"No"};
+  STATE.pertManual = false;:
+  setPresentation("Symptomatic PE"); setAttribution("Yes / Suspected");
   STATE.pertManual = false; buildYnButtons(); goWizard(1);
 }
 
@@ -632,7 +680,7 @@ function openCaseModal(id, mode) {
     kv("Age", a.Age + " yrs") + kv("Heart Rate", a.Heart_Rate + " bpm") + kv("Systolic BP", a.Systolic_BP + " mmHg") + kv("SpO2", a.SpO2_Percent + "%") + 
     kv("Resp. Rate", (a.Respiratory_Rate || "-") + " /min") + kv("O2 Support", a.O2_Support || "Room Air") +
     kv("RV Dilation", a.RV_Dilation_Echo) + kv("Elevated Troponin", a.Elevated_Troponin) + kv("Arrest / Shock", a.Cardiopulmonary_Arrest) +
-    kv("Symptomatic", a.Symptomatic) + kv("History of Cancer", a.History_Cancer) + kv("Cardiopulmonary Dis.", a.Chronic_Cardiopulmonary) +
+    kv("Presentation", a.Symptomatic) + kv("PE Attribution", a.PE_Attribution || "Yes / Suspected") + kv("History of Cancer", a.History_Cancer) + kv("Cardiopulmonary Dis.", a.Chronic_Cardiopulmonary) +
     '</div><div class="kv-item" style="margin-top:8px;"><div class="kv-label">Comorbidities</div><div class="kv-val">' + esc(a.Comorbidities || "None recorded") + '</div>' +
     (a.Comorbidities_Notes ? '<div class="small-muted" style="margin-top:4px;">Notes: ' + esc(a.Comorbidities_Notes) + '</div>' : '') + '</div></div>';
 
