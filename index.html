@@ -603,7 +603,7 @@ function resetWizard() {
   STATE.selectedComorbs = {};
   var cs = document.querySelectorAll("#comorbChips .chip"); for (var j = 0; j < cs.length; j++) cs[j].classList.remove("selected");
   STATE.yn = {History_Cancer:"No",Chronic_Cardiopulmonary:"No",RV_Dilation_Echo:"No",Elevated_Troponin:"No",Cardiopulmonary_Arrest:"No"};
-  STATE.pertManual = false;:
+  STATE.pertManual = false;
   setPresentation("Symptomatic PE"); setAttribution("Yes / Suspected");
   STATE.pertManual = false; buildYnButtons(); goWizard(1);
 }
